@@ -1,0 +1,47 @@
+jira:
+  image: pghalliday/jira:latest
+  links:
+    - postgres
+  volumes_from:
+    - atlassianFiles
+  ports:
+    - "0.0.0.0:8080:8080"
+
+stash:
+  image: pghalliday/stash:latest
+  links:
+    - postgres
+    - jira
+  volumes_from:
+    - atlassianFiles
+  ports:
+    - "0.0.0.0:7990:7990"
+
+bamboo:
+  image: pghalliday/bamboo:latest
+  links:
+    - postgres
+  volumes_from:
+    - atlassianFiles
+  ports:
+    - "0.0.0.0:8085:8085"
+
+atlassianFiles:
+  image: ubuntu:latest
+  volumes:
+    - /var/atlassian/application-data/jira
+    - /var/atlassian/application-data/stash
+    - /var/atlassian/application-data/bamboo
+  command: true
+
+postgres:
+  image: postgres:latest
+  environment:
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=postgres
+  volumes_from:
+    - postgresFiles
+
+postgresFiles:
+  image: postgres:latest
+  command: true
