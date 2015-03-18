@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - docker
-- fig
+- docker-compose
 
 ## Usage
 
@@ -18,7 +18,7 @@
 - Run 
 
 ```
-fig up
+docker-compose up
 ```
 
 - Finish configuration by connecting to
@@ -45,5 +45,5 @@ fig up
 - Run
 
 ```
-fig rm -v
+docker-compose rm
 ```
