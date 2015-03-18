@@ -25,10 +25,20 @@ fig up
   - http://jira.test.net/
   - http://stash.test.net/
   - http://bamboo.test.net/
-- Optionally configure with Postgres database at
+- Optionally configure with Postgres databases at
   - `postgres.test.net:5432`
-  - username `postgres`
-  - password `postgres`
+  - JIRA
+    - database `jira`
+    - user `jira`
+    - password `jira`
+  - Stash
+    - database `stash`
+    - user `stash`
+    - password `stash`
+  - Bamboo
+    - database `bamboo`
+    - user `bamboo`
+    - password `bamboo`
 
 ## Resetting data
 

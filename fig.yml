@@ -73,5 +73,9 @@ postgres:
   environment:
     - POSTGRES_USER=postgres
     - POSTGRES_PASSWORD=postgres
+  volumes:
+    - "jira.sh:/docker-entrypoint-initdb.d/jira.sh"
+    - "stash.sh:/docker-entrypoint-initdb.d/stash.sh"
+    - "bamboo.sh:/docker-entrypoint-initdb.d/bamboo.sh"
   volumes_from:
     - postgresFiles
