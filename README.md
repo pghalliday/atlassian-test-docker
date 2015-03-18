@@ -22,9 +22,9 @@ fig up
 ```
 
 - Finish configuration by connecting to
-  - [http://jira.test.net/]
-  - [http://stash.test.net/]
-  - [http://bamboo.test.net/]
+  - http://jira.test.net/
+  - http://stash.test.net/
+  - http://bamboo.test.net/
 - Configure with Postgres database at
   - `postgres.test.net:5432`
   - username `postgres`
