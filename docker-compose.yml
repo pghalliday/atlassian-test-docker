@@ -1,15 +1,19 @@
 ambassador:
   image: cpuguy83/docker-grand-ambassador:latest
   volumes:
-    - "/var/run/docker.sock:/var/run/docker.sock"
-  command: "-name atlassiantestdocker_nginx_1 -name atlassiantestdocker_jira_1 -name atlassiantestdocker_stash_1 -name atlassiantestdocker_bamboo_1 -name atlassiantestdocker_postgres_1"
+    - /var/run/docker.sock:/var/run/docker.sock
+  command: -name atlassiantestdocker_nginx_1 -name atlassiantestdocker_jira_1 -name atlassiantestdocker_stash_1 -name atlassiantestdocker_bamboo_1 -name atlassiantestdocker_postgres_1
 
-atlassianFiles:
-  image: ubuntu:latest
-  volumes:
-    - /var/atlassian/application-data/jira
-    - /var/atlassian/application-data/stash
-    - /var/atlassian/application-data/bamboo
+jiraFiles:
+  image: pghalliday/jira:latest
+  command: true
+
+stashFiles:
+  image: pghalliday/stash:latest
+  command: true
+
+bambooFiles:
+  image: pghalliday/bamboo:latest
   command: true
 
 postgresFiles:
@@ -23,11 +27,11 @@ nginx:
     - ambassador:stash.test.net
     - ambassador:bamboo.test.net
   volumes:
-    - "jira.conf:/etc/nginx/conf.d/jira.conf"
-    - "stash.conf:/etc/nginx/conf.d/stash.conf"
-    - "bamboo.conf:/etc/nginx/conf.d/bamboo.conf"
+    - jira.conf:/etc/nginx/conf.d/jira.conf
+    - stash.conf:/etc/nginx/conf.d/stash.conf
+    - bamboo.conf:/etc/nginx/conf.d/bamboo.conf
   ports:
-    - "0.0.0.0:80:80"
+    - 0.0.0.0:80:80
 
 jira:
   image: pghalliday/jira:latest
@@ -40,7 +44,7 @@ jira:
     - ambassador:stash.test.net
     - ambassador:bamboo.test.net
   volumes_from:
-    - atlassianFiles
+    - jiraFiles
 
 stash:
   image: pghalliday/stash:latest
@@ -53,7 +57,9 @@ stash:
     - ambassador:stash.test.net
     - ambassador:bamboo.test.net
   volumes_from:
-    - atlassianFiles
+    - stashFiles
+  ports:
+    - 0.0.0.0:7999:7999
 
 bamboo:
   image: pghalliday/bamboo:latest
@@ -66,7 +72,7 @@ bamboo:
     - ambassador:stash.test.net
     - ambassador:bamboo.test.net
   volumes_from:
-    - atlassianFiles
+    - bambooFiles
 
 postgres:
   image: postgres:latest
@@ -74,8 +80,8 @@ postgres:
     - POSTGRES_USER=postgres
     - POSTGRES_PASSWORD=postgres
   volumes:
-    - "jira.sh:/docker-entrypoint-initdb.d/jira.sh"
-    - "stash.sh:/docker-entrypoint-initdb.d/stash.sh"
-    - "bamboo.sh:/docker-entrypoint-initdb.d/bamboo.sh"
+    - jira.sh:/docker-entrypoint-initdb.d/jira.sh
+    - stash.sh:/docker-entrypoint-initdb.d/stash.sh
+    - bamboo.sh:/docker-entrypoint-initdb.d/bamboo.sh
   volumes_from:
     - postgresFiles
