@@ -19,9 +19,9 @@ postgresFiles:
 nginx:
   image: nginx:latest
   links:
-    - ambassador:jira
-    - ambassador:stash
-    - ambassador:bamboo
+    - ambassador:jira.test.net
+    - ambassador:stash.test.net
+    - ambassador:bamboo.test.net
   volumes:
     - "jira.conf:/etc/nginx/conf.d/jira.conf"
     - "stash.conf:/etc/nginx/conf.d/stash.conf"
@@ -32,39 +32,39 @@ nginx:
 jira:
   image: pghalliday/jira:latest
   environment:
-    - JIRA_PROXY_NAME=jira
+    - JIRA_PROXY_NAME=jira.test.net
     - JIRA_PROXY_PORT=80
   links:
-    - ambassador:postgres
-    - ambassador:jira
-    - ambassador:stash
-    - ambassador:bamboo
+    - ambassador:postgres.test.net
+    - ambassador:jira.test.net
+    - ambassador:stash.test.net
+    - ambassador:bamboo.test.net
   volumes_from:
     - atlassianFiles
 
 stash:
   image: pghalliday/stash:latest
   environment:
-    - STASH_PROXY_NAME=stash
+    - STASH_PROXY_NAME=stash.test.net
     - STASH_PROXY_PORT=80
   links:
-    - ambassador:postgres
-    - ambassador:jira
-    - ambassador:stash
-    - ambassador:bamboo
+    - ambassador:postgres.test.net
+    - ambassador:jira.test.net
+    - ambassador:stash.test.net
+    - ambassador:bamboo.test.net
   volumes_from:
     - atlassianFiles
 
 bamboo:
   image: pghalliday/bamboo:latest
   environment:
-    - BAMBOO_PROXY_NAME=bamboo
+    - BAMBOO_PROXY_NAME=bamboo.test.net
     - BAMBOO_PROXY_PORT=80
   links:
-    - ambassador:postgres
-    - ambassador:jira
-    - ambassador:stash
-    - ambassador:bamboo
+    - ambassador:postgres.test.net
+    - ambassador:jira.test.net
+    - ambassador:stash.test.net
+    - ambassador:bamboo.test.net
   volumes_from:
     - atlassianFiles
 
