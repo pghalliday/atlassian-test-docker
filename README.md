@@ -25,7 +25,7 @@ fig up
   - http://jira.test.net/
   - http://stash.test.net/
   - http://bamboo.test.net/
-- Configure with Postgres database at
+- Optionally configure with Postgres database at
   - `postgres.test.net:5432`
   - username `postgres`
   - password `postgres`
