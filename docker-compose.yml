@@ -9,31 +9,11 @@ ambassador:
     -name atlassiantestdocker_stash_1
     -name atlassiantestdocker_bamboo_1
     -name atlassiantestdocker_confluence_1
+    -name atlassiantestdocker_nginx_1
 
 postgresFiles:
   image: postgres:latest
   command: true
-
-crowdFiles:
-  image: pghalliday/crowd:latest
-  command: true
-
-jiraFiles:
-  image: pghalliday/jira:latest
-  command: true
-
-stashFiles:
-  image: pghalliday/stash:latest
-  command: true
-
-bambooFiles:
-  image: pghalliday/bamboo:latest
-  command: true
-
-confluenceFiles:
-  image: pghalliday/confluence:latest
-  command: true
-
 postgres:
   image: postgres:latest
   environment:
@@ -48,11 +28,19 @@ postgres:
   volumes_from:
     - postgresFiles
 
+crowdFiles:
+  image: pghalliday/crowd:latest
+  command: true
 crowd:
   image: pghalliday/crowd:latest
   environment:
     - CROWD_PROXY_NAME=crowd.test.net
     - CROWD_PROXY_PORT=80
+    - CROWDID_POSTGRES_HOST=postgres.test.net
+    - CROWDID_POSTGRES_PORT=5432
+    - CROWDID_POSTGRES_USER=crowdid
+    - CROWDID_POSTGRES_PASSWORD=crowdid
+    - CROWDID_POSTGRES_DATABASE=crowdid
   links:
     - ambassador:postgres.test.net
     - ambassador:crowd.test.net
@@ -63,6 +51,9 @@ crowd:
   volumes_from:
     - crowdFiles
 
+jiraFiles:
+  image: pghalliday/jira:latest
+  command: true
 jira:
   image: pghalliday/jira:latest
   environment:
@@ -78,6 +69,9 @@ jira:
   volumes_from:
     - jiraFiles
 
+stashFiles:
+  image: pghalliday/stash:latest
+  command: true
 stash:
   image: pghalliday/stash:latest
   environment:
@@ -95,6 +89,9 @@ stash:
   ports:
     - 0.0.0.0:7999:7999
 
+bambooFiles:
+  image: pghalliday/bamboo:latest
+  command: true
 bamboo:
   image: pghalliday/bamboo:latest
   environment:
@@ -110,6 +107,9 @@ bamboo:
   volumes_from:
     - bambooFiles
 
+confluenceFiles:
+  image: pghalliday/confluence:latest
+  command: true
 confluence:
   image: pghalliday/confluence:latest
   environment:

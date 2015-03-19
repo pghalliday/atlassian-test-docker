@@ -63,3 +63,7 @@ docker-compose up
 ```
 docker-compose rm
 ```
+
+## Deployment notes
+
+
