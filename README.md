@@ -10,9 +10,11 @@
 - Add the following to your `/etc/hosts`
 
 ```
+127.0.0.1   crowd.test.net
 127.0.0.1   jira.test.net
 127.0.0.1   stash.test.net
 127.0.0.1   bamboo.test.net
+127.0.0.1   confluence.test.net
 ```
 
 - Run 
@@ -22,9 +24,11 @@ docker-compose up
 ```
 
 - Finish configuration by connecting to
+  - http://crowd.test.net/
   - http://jira.test.net/
   - http://stash.test.net/
   - http://bamboo.test.net/
+  - http://confluence.test.net/
 - Optionally configure with Postgres databases at
   - `postgres.test.net:5432`
   - JIRA

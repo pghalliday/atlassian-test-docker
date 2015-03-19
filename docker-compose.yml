@@ -2,7 +2,21 @@ ambassador:
   image: cpuguy83/docker-grand-ambassador:latest
   volumes:
     - /var/run/docker.sock:/var/run/docker.sock
-  command: -name atlassiantestdocker_nginx_1 -name atlassiantestdocker_jira_1 -name atlassiantestdocker_stash_1 -name atlassiantestdocker_bamboo_1 -name atlassiantestdocker_postgres_1
+  command: >
+    -name atlassiantestdocker_postgres_1
+    -name atlassiantestdocker_crowd_1
+    -name atlassiantestdocker_jira_1
+    -name atlassiantestdocker_stash_1
+    -name atlassiantestdocker_bamboo_1
+    -name atlassiantestdocker_confluence_1
+
+postgresFiles:
+  image: postgres:latest
+  command: true
+
+crowdFiles:
+  image: pghalliday/crowd:latest
+  command: true
 
 jiraFiles:
   image: pghalliday/jira:latest
@@ -16,22 +30,38 @@ bambooFiles:
   image: pghalliday/bamboo:latest
   command: true
 
-postgresFiles:
-  image: postgres:latest
+confluenceFiles:
+  image: pghalliday/confluence:latest
   command: true
 
-nginx:
-  image: nginx:latest
+postgres:
+  image: postgres:latest
+  environment:
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=postgres
+  volumes:
+    - crowd.sh:/docker-entrypoint-initdb.d/crowd.sh
+    - jira.sh:/docker-entrypoint-initdb.d/jira.sh
+    - stash.sh:/docker-entrypoint-initdb.d/stash.sh
+    - bamboo.sh:/docker-entrypoint-initdb.d/bamboo.sh
+    - confluence.sh:/docker-entrypoint-initdb.d/confluence.sh
+  volumes_from:
+    - postgresFiles
+
+crowd:
+  image: pghalliday/crowd:latest
+  environment:
+    - CROWD_PROXY_NAME=crowd.test.net
+    - CROWD_PROXY_PORT=80
   links:
+    - ambassador:postgres.test.net
+    - ambassador:crowd.test.net
     - ambassador:jira.test.net
     - ambassador:stash.test.net
     - ambassador:bamboo.test.net
-  volumes:
-    - jira.conf:/etc/nginx/conf.d/jira.conf
-    - stash.conf:/etc/nginx/conf.d/stash.conf
-    - bamboo.conf:/etc/nginx/conf.d/bamboo.conf
-  ports:
-    - 0.0.0.0:80:80
+    - ambassador:confluence.test.net
+  volumes_from:
+    - crowdFiles
 
 jira:
   image: pghalliday/jira:latest
@@ -40,9 +70,11 @@ jira:
     - JIRA_PROXY_PORT=80
   links:
     - ambassador:postgres.test.net
+    - ambassador:crowd.test.net
     - ambassador:jira.test.net
     - ambassador:stash.test.net
     - ambassador:bamboo.test.net
+    - ambassador:confluence.test.net
   volumes_from:
     - jiraFiles
 
@@ -53,9 +85,11 @@ stash:
     - STASH_PROXY_PORT=80
   links:
     - ambassador:postgres.test.net
+    - ambassador:crowd.test.net
     - ambassador:jira.test.net
     - ambassador:stash.test.net
     - ambassador:bamboo.test.net
+    - ambassador:confluence.test.net
   volumes_from:
     - stashFiles
   ports:
@@ -68,20 +102,42 @@ bamboo:
     - BAMBOO_PROXY_PORT=80
   links:
     - ambassador:postgres.test.net
+    - ambassador:crowd.test.net
     - ambassador:jira.test.net
     - ambassador:stash.test.net
     - ambassador:bamboo.test.net
+    - ambassador:confluence.test.net
   volumes_from:
     - bambooFiles
 
-postgres:
-  image: postgres:latest
+confluence:
+  image: pghalliday/confluence:latest
   environment:
-    - POSTGRES_USER=postgres
-    - POSTGRES_PASSWORD=postgres
-  volumes:
-    - jira.sh:/docker-entrypoint-initdb.d/jira.sh
-    - stash.sh:/docker-entrypoint-initdb.d/stash.sh
-    - bamboo.sh:/docker-entrypoint-initdb.d/bamboo.sh
+    - CONFLUENCE_PROXY_NAME=confluence.test.net
+    - CONFLUENCE_PROXY_PORT=80
+  links:
+    - ambassador:postgres.test.net
+    - ambassador:crowd.test.net
+    - ambassador:jira.test.net
+    - ambassador:stash.test.net
+    - ambassador:bamboo.test.net
+    - ambassador:confluence.test.net
   volumes_from:
-    - postgresFiles
+    - confluenceFiles
+
+nginx:
+  image: nginx:latest
+  links:
+    - ambassador:crowd.test.net
+    - ambassador:jira.test.net
+    - ambassador:stash.test.net
+    - ambassador:bamboo.test.net
+    - ambassador:confluence.test.net
+  volumes:
+    - crowd.conf:/etc/nginx/conf.d/crowd.conf
+    - jira.conf:/etc/nginx/conf.d/jira.conf
+    - stash.conf:/etc/nginx/conf.d/stash.conf
+    - bamboo.conf:/etc/nginx/conf.d/bamboo.conf
+    - confluence.conf:/etc/nginx/conf.d/confluence.conf
+  ports:
+    - 0.0.0.0:80:80
