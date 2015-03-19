@@ -59,6 +59,10 @@ jira:
   environment:
     - JIRA_PROXY_NAME=jira.test.net
     - JIRA_PROXY_PORT=80
+    - JIRA_CROWD_APPLICATION_NAME=jira
+    - JIRA_CROWD_APPLICATION_PASSWORD=jira
+    - JIRA_CROWD_BASE_URL=http://crowd.test.net/crowd
+    - JIRA_CROWD_SESSION_VALIDATION_INTERVAL=2
   links:
     - ambassador:postgres.test.net
     - ambassador:crowd.test.net
