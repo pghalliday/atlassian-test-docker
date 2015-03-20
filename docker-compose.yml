@@ -41,6 +41,9 @@ crowd:
     - CROWDID_POSTGRES_USER=crowdid
     - CROWDID_POSTGRES_PASSWORD=crowdid
     - CROWDID_POSTGRES_DATABASE=crowdid
+    - CROWD_XML=/crowd.xml
+  volumes:
+    - crowd.xml:/crowd.xml
   links:
     - ambassador:postgres.test.net
     - ambassador:crowd.test.net
